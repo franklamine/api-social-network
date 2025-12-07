@@ -15,5 +15,8 @@ jobs:
       - name: recuperation du repository
         uses: actions/checkout@v3
 
+      - name: Message après checkout
+        run: echo "Code recupéré avec succès"
+
 
 
