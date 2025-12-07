@@ -5,7 +5,7 @@ name: deploment du backend de social network
 on:
   push:
     branches:
-      -main
+      - main
 
 jobs:
   build-and-push:
