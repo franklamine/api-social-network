@@ -1,6 +1,6 @@
 # schema: https://json.schemastore.org/github-workflow.json
 
-name: deploment du front de social network
+name: deploment du backend de social network
 
 on:
   push:
@@ -11,9 +11,9 @@ jobs:
   runs-on: ubuntu-latest
 
   steps:
-    -name: recuperation du repository
-    uses: actions/checkout@v3
-    run: echo "code recupéré avec success"
+    - name: recuperation du repository
+      uses: actions/checkout@v3
+      run: echo "code recupéré avec success"
 
 
 
