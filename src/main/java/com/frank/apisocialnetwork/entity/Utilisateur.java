@@ -28,7 +28,7 @@ public class Utilisateur implements UserDetails {
     private String email;
     private String motDePasse;
     private String motDePasseConfirmation;
-    private boolean actif = false;
+    private boolean actif = true;
 
     @OneToOne(cascade = CascadeType.ALL)
     private Role role;
