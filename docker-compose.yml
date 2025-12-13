@@ -1,0 +1,56 @@
+# Use root/example as user/password credentials
+
+services:
+
+  api-social-network:
+    image: franklamine/api-social-network:latest
+    restart: always
+    environment:
+      APP_NAME: api-social-network
+      SERVER_PORT: 8081
+      DB_URL: jdbc:mariadb://mariabd:3306/db-social-network
+      DB_USERNAME: root
+      DB_PASSWORD: frank
+      MAIL_HOST: smtp4dev
+      MAIL_PORT: 25
+      MAX_FILE_SIZE: 50GB
+      MAX_REQUEST_SIZE: 150GB
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mariabd
+    dns:
+      - 8.8.8.8
+
+  mariabd:
+    container_name: mariabd-11.8.1-noble-rc
+    image: mariadb:11.8.1-noble-rc
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: frank
+      MARIADB_DATABASE: db-social-network
+    ports:
+      - "3308:3306"
+    volumes:
+      - volume-social-network:/var/lib/mysql
+
+  adminer:
+    container_name: adminer-5.3.0-standalone
+    image: adminer:5.3.0-standalone
+    restart: always
+    ports:
+      - "9080:8080"
+
+  smtp4dev:
+    image: rnwood/smtp4dev:v3
+    restart: always
+    ports:
+      # Change the number before : to the port the web interface should be accessible on
+      - '9081:80'
+      # Change the number before : to the port the SMTP server should be accessible on
+      - '9025:25'
+      # Change the number before : to the port the IMAP server should be accessible on
+      #- '143:143'
+
+volumes:
+  volume-social-network:

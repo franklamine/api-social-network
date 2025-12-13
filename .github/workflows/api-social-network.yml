@@ -1,0 +1,40 @@
+name: deploment du frontend de social network
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push docker image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/api-social-network:latest .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/api-social-network:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: Build
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          port: 22
+          script: |
+            docker compose pull
+            docker compose up -d
