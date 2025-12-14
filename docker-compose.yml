@@ -3,7 +3,7 @@
 services:
 
   social-network-front:
-    image: franklamine/social-network
+    image: franklamine/social-network:0.0.1
     restart: always
     ports:
       - "80:80"
