@@ -44,6 +44,7 @@ public class UtilisateurService {
 
 
     public ResponseEntity<String> inscription(Utilisateur utilisateur) {
+        log.info("Utilisateur inscription");
         Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findByEmail(utilisateur.getEmail());
         if (utilisateurOptional.isPresent()) {
             throw new ApiSocialNetworkException("Cet utilisateur existe déjà", HttpStatus.CONFLICT);

@@ -18,12 +18,12 @@ public class Token {
     private Long id;
 
     @Lob
-    @Column( columnDefinition = "TEXT")
+    @Column( columnDefinition = "CLOB")
     private String refreshToken;
 
     @Lob
-    @Column( columnDefinition = "TEXT")
-    private String AccessToken;
+    @Column( columnDefinition = "CLOB")
+    private String accessToken;
 
     @ManyToOne
     private Utilisateur utilisateur;
