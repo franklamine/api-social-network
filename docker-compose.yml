@@ -17,6 +17,8 @@ services:
       DB_URL: jdbc:oracle:thin:@bdsocialnetwork_high?TNS_ADMIN=/opt/oracle/wallet
       DB_USERNAME: ADMIN
       DB_PASSWORD: frankLAMINE2050
+      MAIL_HOST: smtp.gmail.com
+      MAIL_PORT: 587
       MAIL_USERNAME: fokamfranklamine@gmail.com
       MAIL_PASSWORD: mpketfytanprtxky
       MAX_FILE_SIZE: 50GB
