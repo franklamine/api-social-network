@@ -1,6 +1,7 @@
 # Use root/example as user/password credentials
 
 services:
+
   social-network-front:
     image: franklamine/social-network
     restart: always
