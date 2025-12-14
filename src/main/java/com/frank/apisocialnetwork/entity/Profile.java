@@ -20,13 +20,9 @@ public class Profile {
 
     private String bio;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] photoProfile;
+    private String urlPhotoProfile;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] photoCouverture;
+    private String urlPhotoCouverture;
 
     @OneToOne
     @JoinColumn( nullable = false, unique = true)

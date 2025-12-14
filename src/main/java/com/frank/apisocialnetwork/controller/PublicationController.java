@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://151.145.59.163")
+@CrossOrigin(origins = "http://localhost:5173")
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = "publications")

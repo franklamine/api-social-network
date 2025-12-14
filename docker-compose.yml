@@ -21,6 +21,9 @@ services:
       MAIL_PORT: 587
       MAIL_USERNAME: fokamfranklamine@gmail.com
       MAIL_PASSWORD: mpketfytanprtxky
+      CLOUDINARY_API_KEY: 219962877927622
+      CLOUDINARY_SECRET_KEY: ZT-0CfPTUlmEj7vGmvCS8ilwezw
+      CLOUDINARY_NAME: dxi8oozub
       MAX_FILE_SIZE: 50GB
       MAX_REQUEST_SIZE: 150GB
     ports:

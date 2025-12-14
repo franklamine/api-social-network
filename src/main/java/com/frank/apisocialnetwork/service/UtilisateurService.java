@@ -140,15 +140,13 @@ public class UtilisateurService {
     public ResponseEntity<UserConnectedDTO> getConnectedUser() {
 
         Utilisateur userConnected = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String photoProfileUserConnectedBase64 = userConnected.getProfile().getPhotoProfile() != null ? "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(userConnected.getProfile().getPhotoProfile()) : null;
-        String photoCouvertureUserConnectedBase64 = userConnected.getProfile().getPhotoCouverture() != null ? "data:image/jpeg;base64," + Base64.getEncoder().encodeToString( userConnected.getProfile().getPhotoCouverture()) : null;
 
         UserConnectedDTO userConnectedDTO = new UserConnectedDTO(
                 userConnected.getId(),
                 userConnected.getNom(),
                 userConnected.getPrenom(),
-                photoProfileUserConnectedBase64,
-                photoCouvertureUserConnectedBase64
+                userConnected.getProfile().getUrlPhotoProfile(),
+                userConnected.getProfile().getUrlPhotoCouverture()
         );
 
         return new ResponseEntity<>(userConnectedDTO, HttpStatus.OK);
@@ -163,11 +161,7 @@ public class UtilisateurService {
                 .orElseThrow(() -> new ApiSocialNetworkException("Utilisateur non trouvé", HttpStatus.NOT_FOUND));
 
         Profile profile = utilisateur.getProfile();
-        String photoProfileBase64 = profile.getPhotoProfile() != null ? "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(profile.getPhotoProfile()) : null;
-        String photoCouvertureBase64 = profile.getPhotoCouverture() != null ? "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(profile.getPhotoCouverture()) : null;
-
-        ProfileDTO profileDTO = new ProfileDTO(profile.getBio(), photoProfileBase64, photoCouvertureBase64);
-
+        ProfileDTO profileDTO = new ProfileDTO(profile.getBio(), profile.getUrlPhotoProfile(), profile.getUrlPhotoCouverture());
 
         UtilisateurDTO utilisateurDTO = new UtilisateurDTO(
                 utilisateur.getId(),

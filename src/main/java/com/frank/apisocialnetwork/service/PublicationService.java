@@ -15,7 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +23,7 @@ import java.util.stream.Collectors;
 @Service
 public class PublicationService {
     private final PublicationRepository publicationRepository;
+    private final CloudinaryService cloudinaryService;
 
     public ResponseEntity<String> creerPublication(String message, MultipartFile photo, MultipartFile video) {
         try {
@@ -36,13 +36,13 @@ public class PublicationService {
                 if (!photo.getContentType().startsWith("image/")) {
                     throw new ApiSocialNetworkException("Fichier image non valide", HttpStatus.BAD_REQUEST);
                 }
-                publication.setPhoto(photo.getBytes());
+                publication.setUrlPhoto(cloudinaryService.uploadFile(photo));
             }
             if (video != null && !video.isEmpty()) {
                 if (!video.getContentType().startsWith("video/")) {
                     throw new ApiSocialNetworkException("Fichier vidéo non valide", HttpStatus.BAD_REQUEST);
                 }
-                publication.setVideo(video.getBytes());
+                publication.setUrlVideo(cloudinaryService.uploadFile(video));
             }
 
             publicationRepository.save(publication);
@@ -56,32 +56,24 @@ public class PublicationService {
 
         List<PublicationDTO> publicationDTOS = publicationRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(publication -> {
-                    String photoBase64 = publication.getPhoto() != null
-                            ? "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(publication.getPhoto())
-                            : null;
-
-                    String videoBase64 = publication.getVideo() != null
-                            ? "data:video/mp4;base64," + Base64.getEncoder().encodeToString(publication.getVideo())
-                            : null;
 
                     String auteurPublication = publication.getUtilisateur().getNom() + " " + publication.getUtilisateur().getPrenom();
 
                     Profile profile = publication.getUtilisateur().getProfile();
-                    String photoAuteurPublicationBase64 = profile.getPhotoProfile() != null ? "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(profile.getPhotoProfile()) : null;
+                    String photoAuteurPublicationUrl = profile.getUrlPhotoProfile();
 
                     List<CommentDTO> commentDTOs = publication.getComments().stream()
 //                              .sorted((c1, c2) -> c2.getId().compareTo(c1.getId())) // tri du plus récent au plus ancien
                             .map(comment -> {
                                 Utilisateur utilisateur = comment.getUtilisateur();
                                 Profile profile1 = utilisateur.getProfile();
-                                String photoAuteurComentBase64 = profile1.getPhotoProfile() != null ? "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(profile1.getPhotoProfile()) : null;
-
+                                String photoAuteurComentUrl = profile1.getUrlPhotoProfile();
                                 return new CommentDTO(
                                         publication.getId(),
                                         comment.getMessage(),
                                         comment.getLikes(),
                                         utilisateur.getNom() + " " + utilisateur.getPrenom(),
-                                        photoAuteurComentBase64
+                                        photoAuteurComentUrl
                                 );
                             }).collect(Collectors.toList());
 
@@ -89,10 +81,10 @@ public class PublicationService {
                             publication.getId(),
                             publication.getUtilisateur().getId(),
                             publication.getMessage(),
-                            photoBase64,
-                            videoBase64,
+                            publication.getUrlPhoto(),
+                            publication.getUrlVideo(),
                             auteurPublication,
-                            photoAuteurPublicationBase64,
+                            photoAuteurPublicationUrl,
                             commentDTOs,
                             publication.getLikes(),
                             publication.getCreatedAt()

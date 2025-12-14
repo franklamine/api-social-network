@@ -8,8 +8,8 @@ public record PublicationDTO(
         int id,
         int idAuteur,
         String message,
-        String photo, // en base64
-        String video, // en base64
+        String urlPhoto,
+        String urlVideo,
         String auteurPublication,
         String photoAuteurPublication,
         List<CommentDTO> comments,

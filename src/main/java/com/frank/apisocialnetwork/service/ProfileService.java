@@ -10,14 +10,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 
 
 @AllArgsConstructor
 @Service
 public class ProfileService {
 
-    private ProfileRepository profileRepository;
+    private final ProfileRepository profileRepository;
+    private final CloudinaryService cloudinaryService;
 
     public ResponseEntity<String> addOrUpdatePhotoProfile(MultipartFile photoProfile) {
 
@@ -25,7 +25,7 @@ public class ProfileService {
             Utilisateur utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
             if(photoProfile != null && !photoProfile.isEmpty() && photoProfile.getContentType() != null && photoProfile.getContentType().startsWith("image/")) {
-                utilisateur.getProfile().setPhotoProfile(photoProfile.getBytes());
+                utilisateur.getProfile().setUrlPhotoProfile(cloudinaryService.uploadFile(photoProfile));
             }
 
             profileRepository.save(utilisateur.getProfile());
@@ -43,7 +43,7 @@ public class ProfileService {
             Utilisateur utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
             if(photoCouverture != null && !photoCouverture.isEmpty() && photoCouverture.getContentType() != null && photoCouverture.getContentType().startsWith("image/")) {
-                utilisateur.getProfile().setPhotoCouverture(photoCouverture.getBytes());
+                utilisateur.getProfile().setUrlPhotoCouverture(cloudinaryService.uploadFile(photoCouverture));
             }
 
             profileRepository.save(utilisateur.getProfile());
