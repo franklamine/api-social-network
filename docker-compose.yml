@@ -7,6 +7,11 @@ services:
     restart: always
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+
 
   api-social-network:
     image: franklamine/api-social-network:latest
@@ -32,6 +37,42 @@ services:
       - 8.8.8.8
     volumes:
       - ./Wallet_bdsocialnetwork:/opt/oracle/wallet
+
+
+  certbot:
+    image: certbot/certbot
+
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+#
+#    entrypoint: >
+#      sh -c "certbot renew --webroot -w /var/www/certbot --quiet && sleep 12h"
+
+
+#  docker compose run --rm certbot certonly --webroot --webroot-path=/var/www/certbot --email fokamfranklamine@mail.com --agree-tos --no-eff-email -d lfsol.cloud -d www.lfsol.cloud
+#
+#
+#  frank@ubuntu-server:~$   docker compose run --rm certbot certonly --webroot --webroot-path=/var/www/certbot --email fokamfranklamine@mail.com --agree-tos --no-eff-email -d lfsol.cloud -d www.lfsol.cloud
+#  Saving debug log to /var/log/letsencrypt/letsencrypt.log
+#  Account registered.
+#  Requesting a certificate for lfsol.cloud and www.lfsol.cloud
+#
+#  Successfully received certificate.
+#Certificate is saved at: /etc/letsencrypt/live/lfsol.cloud/fullchain.pem
+#Key is saved at:         /etc/letsencrypt/live/lfsol.cloud/privkey.pem
+#  This certificate expires on 2026-03-16.
+#  These files will be updated when the certificate renews.
+#
+#NEXT STEPS:
+#  - The certificate will need to be renewed before it expires. Certbot can automatically renew the certificate in the background, but you may need to take steps to enable that functionality. See https://certbot.org/renewal-setup for instructions.
+#
+#  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#If you like Certbot, please consider supporting our work by:
+#  * Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+#  * Donating to EFF:                    https://eff.org/donate-le
+#    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
 
 #  mariabd:
