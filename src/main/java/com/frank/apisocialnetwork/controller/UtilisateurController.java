@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 //@Slf4j
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "https://lfsol.cloud")
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = "utilisateurs")
