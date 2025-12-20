@@ -36,6 +36,7 @@ public class ConfigurationSecurity {
                         auth.requestMatchers(
                                         "/utilisateurs/inscription",
                                         "/utilisateurs/activation",
+                                        "/utilisateurs/nouveau-code",
                                         "/utilisateurs/connexion",
                                         "/utilisateurs/refresh-token",
                                         "/utilisateurs/deconnexion",

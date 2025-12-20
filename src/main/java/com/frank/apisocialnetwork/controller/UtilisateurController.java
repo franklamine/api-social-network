@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 //@Slf4j
-@CrossOrigin(origins = "https://lfsol.cloud")
+//@CrossOrigin(origins = "https://lfsol.cloud")
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = "utilisateurs")
@@ -33,6 +33,11 @@ public class UtilisateurController {
     @PostMapping(path = "activation")
     public ResponseEntity<String> activation(@RequestBody Map<String, String> codeActivation) {
         return utilisateurService.activation(codeActivation);
+    }
+
+    @PostMapping(path = "nouveau-code")
+    public ResponseEntity<String> nouveauCodeActivation(@RequestBody Map<String, String> email) {
+        return utilisateurService.nouveauCodeActivation(email);
     }
 
     @PostMapping(path = "connexion")
@@ -68,5 +73,10 @@ public class UtilisateurController {
     @GetMapping(path = "{id}")
     public ResponseEntity<UtilisateurDTO> getUserById(@PathVariable Integer id) {
         return utilisateurService.getUserById(id);
+    }
+
+    @DeleteMapping(path = "{id}")
+    public ResponseEntity<String> deleteUserById(@PathVariable Integer id) {
+        return utilisateurService.deleteUserById(id);
     }
 }

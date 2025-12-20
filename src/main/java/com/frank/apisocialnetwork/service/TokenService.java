@@ -29,7 +29,7 @@ public class TokenService {
 
     public String generateToken(String username, boolean isAccessToken) {
 
-        long expiration = isAccessToken ? calculExpiration(30) : calculExpiration(60);
+        long expiration = isAccessToken ? calculExpiration(7L*24*60) : calculExpiration(30L*24*60);
         Utilisateur utilisateur = (Utilisateur) customUserDetailsService.loadUserByUsername(username);
         final Map<String, Object> claims = new HashMap<>(Map.of("nom", utilisateur.getNom(),"prenom" ,utilisateur.getPrenom(), "roles",utilisateur.getAuthorities()));
 

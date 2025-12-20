@@ -76,6 +76,16 @@ public class UtilisateurService {
         return new ResponseEntity<>("cher " + utilisateurAActiver.get().getPrenom() + " votre compte a été activé .", HttpStatus.OK);
     }
 
+    public ResponseEntity<String> nouveauCodeActivation(Map<String, String> email) {
+        Optional<Utilisateur> utilisateur = utilisateurRepository.findByEmail(email.get("email"));
+        if (utilisateur.isEmpty()) {
+            throw new ApiSocialNetworkException("Utilisateur n'existe pas", HttpStatus.NOT_FOUND);
+        }
+        validationService.enregistrerValidationEtNotifier(utilisateur.get());
+
+        return new ResponseEntity<>("Votre nouveau code d'activation a été envoyé a cet email:" +email, HttpStatus.OK);
+    }
+
     public ResponseEntity<Map<String, String>> connexion(AuthentificationDTO authentificationDTO, HttpServletResponse response) {
         Map<String, String> tokens = new HashMap<>();
         try {
@@ -171,6 +181,12 @@ public class UtilisateurService {
         );
 
         return new ResponseEntity<>(utilisateurDTO, HttpStatus.OK);
+    }
+
+
+    public ResponseEntity<String> deleteUserById(Integer id) {
+        utilisateurRepository.deleteById(id);
+        return new ResponseEntity<>("utilisateur supprimer", HttpStatus.OK);
     }
 
 

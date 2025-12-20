@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@CrossOrigin(origins = "https://lfsol.cloud")
+//@CrossOrigin(origins = "https://lfsol.cloud")
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = "comment")

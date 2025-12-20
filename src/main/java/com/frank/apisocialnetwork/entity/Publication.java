@@ -36,7 +36,7 @@ public class Publication {
     @ManyToOne
     private Utilisateur utilisateur;
 
-    @OneToMany(mappedBy = "publication")
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
 

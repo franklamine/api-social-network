@@ -11,13 +11,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "utilisateurs")
+@Table(name = "utilisateurs", uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
 public class Utilisateur implements UserDetails {
 
     @Id
@@ -25,6 +26,7 @@ public class Utilisateur implements UserDetails {
     private Integer id;
     private String nom;
     private String prenom;
+    @Column(unique = true, nullable = false)
     private String email;
     private String motDePasse;
     private String motDePasseConfirmation;
@@ -33,8 +35,14 @@ public class Utilisateur implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL)
     private Role role;
 
-    @OneToOne(mappedBy = "utilisateur", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "utilisateur", cascade = CascadeType.ALL,  orphanRemoval = true)
     Profile profile;
+
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Validation> validations;
+
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Token> tokens;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
