@@ -18,9 +18,10 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping(path = "add")
-    public ResponseEntity<String> addComment(@RequestBody CommentDTO comment) {
-        log.info(comment.toString());
-        commentService.addComment(comment);
-        return new ResponseEntity<>("Comment created", HttpStatus.CREATED);
+    public ResponseEntity<CommentDTO> addComment(@RequestBody CommentDTO comment) {
+
+        CommentDTO commentSaved = commentService.addComment(comment);
+
+        return new ResponseEntity<>(commentSaved, HttpStatus.CREATED);
     }
 }

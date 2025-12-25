@@ -21,7 +21,7 @@ public class CommentService {
     private CommentRepository commentRepository;
     private PublicationRepository publicationRepository;
 
-    public void addComment(CommentDTO comment) {
+    public CommentDTO addComment(CommentDTO comment) {
 
         Comment newComment = new Comment();
 
@@ -30,9 +30,18 @@ public class CommentService {
 
         Utilisateur utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         newComment.setUtilisateur(utilisateur);
-
         newComment.setMessage(comment.message());
 
-        commentRepository.save(newComment);
+        Comment savedComment = commentRepository.save(newComment);
+
+        return new CommentDTO(
+                savedComment.getId(),
+                publication.get().getId(),
+                savedComment.getMessage(),
+                savedComment.getLikes(),
+                utilisateur.getNom() + " " + utilisateur.getPrenom(),
+                utilisateur.getProfile().getUrlPhotoProfile(),
+                savedComment.getCreatedAt()
+        );
     }
 }
