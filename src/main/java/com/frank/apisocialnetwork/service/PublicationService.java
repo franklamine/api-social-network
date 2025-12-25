@@ -68,11 +68,13 @@ public class PublicationService {
                                 Profile profile1 = utilisateur.getProfile();
                                 String photoAuteurComentUrl = profile1.getUrlPhotoProfile();
                                 return new CommentDTO(
+                                        comment.getId(),
                                         publication.getId(),
                                         comment.getMessage(),
                                         comment.getLikes(),
                                         utilisateur.getNom() + " " + utilisateur.getPrenom(),
-                                        photoAuteurComentUrl
+                                        photoAuteurComentUrl,
+                                        comment.getCreatedAt()
                                 );
                             }).collect(Collectors.toList());
 
