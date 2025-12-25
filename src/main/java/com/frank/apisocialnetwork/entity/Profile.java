@@ -25,7 +25,7 @@ public class Profile {
     private String urlPhotoCouverture;
 
     @OneToOne
-    @JoinColumn( nullable = false, unique = true)
+    @JoinColumn(nullable = false, unique = true)
     Utilisateur utilisateur;
 
 }

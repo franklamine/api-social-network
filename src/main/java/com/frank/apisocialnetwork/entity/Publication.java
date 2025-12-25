@@ -41,5 +41,4 @@ public class Publication {
     private List<Comment> comments;
 
 
-
 }
