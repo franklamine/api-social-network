@@ -63,7 +63,6 @@ public class PublicationService {
                     String photoAuteurPublicationUrl = profile.getUrlPhotoProfile();
 
                     List<CommentDTO> commentDTOs = publication.getComments().stream()
-//                              .sorted((c1, c2) -> c2.getId().compareTo(c1.getId())) // tri du plus récent au plus ancien
                             .map(comment -> {
                                 Utilisateur utilisateur = comment.getUtilisateur();
                                 Profile profile1 = utilisateur.getProfile();

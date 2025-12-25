@@ -37,6 +37,7 @@ public class Publication {
     private Utilisateur utilisateur;
 
     @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL)
+    @OrderBy("createdAt ASC")
     private List<Comment> comments;
 
 
