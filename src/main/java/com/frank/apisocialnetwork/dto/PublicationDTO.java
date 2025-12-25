@@ -1,7 +1,7 @@
 package com.frank.apisocialnetwork.dto;
 
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 public record PublicationDTO(
@@ -14,6 +14,6 @@ public record PublicationDTO(
         String photoAuteurPublication,
         List<CommentDTO> comments,
         int likes,
-        LocalDateTime date
+        Instant date
 ) {}
 
