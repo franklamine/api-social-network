@@ -8,6 +8,7 @@ import com.frank.apisocialnetwork.entity.Utilisateur;
 import com.frank.apisocialnetwork.service.UtilisateurService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,6 +75,7 @@ public class UtilisateurController {
     public ResponseEntity<UtilisateurDTO> getUserById(@PathVariable Integer id) {
         return utilisateurService.getUserById(id);
     }
+
 
     @DeleteMapping(path = "{id}")
     public ResponseEntity<String> deleteUserById(@PathVariable Integer id) {

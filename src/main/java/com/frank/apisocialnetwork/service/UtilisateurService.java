@@ -41,6 +41,7 @@ public class UtilisateurService {
     private TokenService tokenService;
     private TokenRepository tokenRepository;
     private CustomUserDetailsService customUserDetailsService;
+    private LikePostService likePostService;
 
 
     public ResponseEntity<String> inscription(Utilisateur utilisateur) {
@@ -177,7 +178,8 @@ public class UtilisateurService {
                 utilisateur.getId(),
                 utilisateur.getNom(),
                 utilisateur.getPrenom(),
-                profileDTO
+                profileDTO,
+                likePostService.getTotalLikesByUser(id)
         );
 
         return new ResponseEntity<>(utilisateurDTO, HttpStatus.OK);
@@ -188,7 +190,6 @@ public class UtilisateurService {
         utilisateurRepository.deleteById(id);
         return new ResponseEntity<>("utilisateur supprimer", HttpStatus.OK);
     }
-
 
 }
 

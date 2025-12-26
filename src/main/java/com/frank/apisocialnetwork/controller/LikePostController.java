@@ -21,4 +21,11 @@ public class LikePostController {
     }
 
 
+    @GetMapping(path = "{userId}")
+    public ResponseEntity<Long> getTotalLikesByUser(@PathVariable Integer userId) {
+        Long totalLikes = likePostService.getTotalLikesByUser(userId);
+
+        return new ResponseEntity<>(totalLikes, HttpStatus.OK);
+    }
+
 }

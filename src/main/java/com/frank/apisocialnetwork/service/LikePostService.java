@@ -39,4 +39,7 @@ public class LikePostService {
     }
 
 
+    public Long getTotalLikesByUser(Integer userId) {
+        return likePostRepository.getTotalLikesByUser(userId);
+    }
 }
