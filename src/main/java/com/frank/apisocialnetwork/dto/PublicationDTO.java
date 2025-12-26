@@ -13,7 +13,8 @@ public record PublicationDTO(
         String auteurPublication,
         String photoAuteurPublication,
         List<CommentDTO> comments,
-        int likes,
+        long likeCount,
+        boolean likedByConnectedUser,
         Instant date
 ) {}
 

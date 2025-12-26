@@ -38,7 +38,6 @@ public class CommentService {
                 savedComment.getId(),
                 publication.get().getId(),
                 savedComment.getMessage(),
-                savedComment.getLikes(),
                 utilisateur.getNom() + " " + utilisateur.getPrenom(),
                 utilisateur.getProfile().getUrlPhotoProfile(),
                 savedComment.getCreatedAt()

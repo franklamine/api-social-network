@@ -21,7 +21,6 @@ public class Publication {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String message;
-    private int likes;
     private String urlPhoto;
     private String urlVideo;
 
@@ -39,6 +38,9 @@ public class Publication {
     @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL)
     @OrderBy("createdAt ASC")
     private List<Comment> comments;
+
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL)
+    private List<LikePost> likePosts;
 
 
 }

@@ -6,6 +6,7 @@ import com.frank.apisocialnetwork.entity.Profile;
 import com.frank.apisocialnetwork.entity.Publication;
 import com.frank.apisocialnetwork.entity.Utilisateur;
 import com.frank.apisocialnetwork.exception.ApiSocialNetworkException;
+import com.frank.apisocialnetwork.repository.LikePostRepository;
 import com.frank.apisocialnetwork.repository.PublicationRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class PublicationService {
     private final PublicationRepository publicationRepository;
     private final CloudinaryService cloudinaryService;
+    private final LikePostRepository likePostRepository;
 
     public ResponseEntity<String> creerPublication(String message, MultipartFile photo, MultipartFile video) {
         try {
@@ -54,6 +56,8 @@ public class PublicationService {
 
     public ResponseEntity<List<PublicationDTO>> getAllPublications() {
 
+        Utilisateur connectedUser = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         List<PublicationDTO> publicationDTOS = publicationRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(publication -> {
 
@@ -71,7 +75,6 @@ public class PublicationService {
                                         comment.getId(),
                                         publication.getId(),
                                         comment.getMessage(),
-                                        comment.getLikes(),
                                         utilisateur.getNom() + " " + utilisateur.getPrenom(),
                                         photoAuteurComentUrl,
                                         comment.getCreatedAt()
@@ -87,12 +90,15 @@ public class PublicationService {
                             auteurPublication,
                             photoAuteurPublicationUrl,
                             commentDTOs,
-                            publication.getLikes(),
+                            publication.getLikePosts().size(),
+                            likePostRepository.findByUtilisateurAndPublication(connectedUser, publication).isPresent(),
                             publication.getCreatedAt()
                     );
                 }).collect(Collectors.toList());
 
         return new ResponseEntity<>(publicationDTOS, HttpStatus.OK);
     }
+
+
 
 }

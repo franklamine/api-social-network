@@ -1,8 +1,10 @@
 package com.frank.apisocialnetwork.controller;
 
 import com.frank.apisocialnetwork.dto.PublicationDTO;
+import com.frank.apisocialnetwork.entity.Publication;
 import com.frank.apisocialnetwork.service.PublicationService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,4 +30,6 @@ public class PublicationController {
     public ResponseEntity<List<PublicationDTO>> getAllPublications() {
         return publicationService.getAllPublications();
     }
+
+
 }

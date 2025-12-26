@@ -8,19 +8,16 @@ import lombok.Setter;
 
 import java.time.Instant;
 
+
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "comments")
-public class Comment {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    private String message;
+@Table(name = "likePosts")
+public class LikePost {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
@@ -31,10 +28,8 @@ public class Comment {
     }
 
     @ManyToOne
-    private Publication publication;
+    Utilisateur utilisateur;
 
     @ManyToOne
-    private Utilisateur utilisateur;
-
-
+    Publication publication;
 }
