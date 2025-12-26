@@ -62,6 +62,9 @@ public class PublicationService {
                 .map(publication -> {
 
                     String auteurPublication = publication.getUtilisateur().getNom() + " " + publication.getUtilisateur().getPrenom();
+                    boolean isLikedByConnectedUser = likePostRepository.findByUtilisateurAndPublication(connectedUser, publication).isPresent();
+                    boolean authorIsFollowByUserConnected =  publication.getUtilisateur().getFollowers().contains(connectedUser);
+
 
                     Profile profile = publication.getUtilisateur().getProfile();
                     String photoAuteurPublicationUrl = profile.getUrlPhotoProfile();
@@ -91,8 +94,10 @@ public class PublicationService {
                             photoAuteurPublicationUrl,
                             commentDTOs,
                             publication.getLikePosts().size(),
-                            likePostRepository.findByUtilisateurAndPublication(connectedUser, publication).isPresent(),
+                            isLikedByConnectedUser,
+                            authorIsFollowByUserConnected,
                             publication.getCreatedAt()
+
                     );
                 }).collect(Collectors.toList());
 

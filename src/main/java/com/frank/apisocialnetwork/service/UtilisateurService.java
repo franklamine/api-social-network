@@ -84,7 +84,7 @@ public class UtilisateurService {
         }
         validationService.enregistrerValidationEtNotifier(utilisateur.get());
 
-        return new ResponseEntity<>("Votre nouveau code d'activation a été envoyé a cet email:" +email, HttpStatus.OK);
+        return new ResponseEntity<>("Votre nouveau code d'activation a été envoyé a cet email:" + email, HttpStatus.OK);
     }
 
     public ResponseEntity<Map<String, String>> connexion(AuthentificationDTO authentificationDTO, HttpServletResponse response) {
@@ -179,7 +179,9 @@ public class UtilisateurService {
                 utilisateur.getNom(),
                 utilisateur.getPrenom(),
                 profileDTO,
-                likePostService.getTotalLikesByUser(id)
+                likePostService.getTotalLikesByUser(id),
+                utilisateur.getSuivis().size(),
+                utilisateur.getFollowers().size()
         );
 
         return new ResponseEntity<>(utilisateurDTO, HttpStatus.OK);
@@ -191,5 +193,53 @@ public class UtilisateurService {
         return new ResponseEntity<>("utilisateur supprimer", HttpStatus.OK);
     }
 
+    public Long followUser(Integer userIdToFollow, Utilisateur userConnected) {
+
+        Utilisateur userConnectedFromDB = utilisateurRepository.findById(userConnected.getId())
+                .orElseThrow(() -> new ApiSocialNetworkException("Utilisateur n'existe pas", HttpStatus.NOT_FOUND));
+        Utilisateur userToFollow = utilisateurRepository.findById(userIdToFollow)
+                .orElseThrow(() -> new ApiSocialNetworkException("Utilisateur n'existe pas", HttpStatus.NOT_FOUND));
+
+        // Empêcher de se suivre soi-même
+        if (userToFollow.getId().equals(userConnectedFromDB.getId())) {
+            throw new ApiSocialNetworkException("Vous ne pouvez pas vous suivre vous meme", HttpStatus.BAD_REQUEST);
+        }
+
+        // Empêcher de suivre deux fois
+        if (userConnectedFromDB.getSuivis().contains(userToFollow)) {
+            throw new ApiSocialNetworkException("Vous suivez deja cette personne", HttpStatus.CONFLICT);
+
+        }
+
+        userConnectedFromDB.getSuivis().add(userToFollow);
+        userToFollow.getFollowers().add(userConnectedFromDB);
+        utilisateurRepository.save(userConnectedFromDB);
+        utilisateurRepository.save(userToFollow);
+
+        return (long) userConnectedFromDB.getSuivis().size();
+    }
+
+    public Long unFollowUser(Integer userIdToUnFollow, Utilisateur userConnected) {
+        Utilisateur userConnectedFromDB = utilisateurRepository.findById(userConnected.getId())
+                .orElseThrow(() -> new ApiSocialNetworkException("Utilisateur n'existe pas", HttpStatus.NOT_FOUND));
+        Utilisateur userToUnFollow = utilisateurRepository.findById(userIdToUnFollow)
+                .orElseThrow(() -> new ApiSocialNetworkException("Utilisateur n'existe pas", HttpStatus.NOT_FOUND));
+
+        // Empêcher de se suivre soi-même
+        if (userToUnFollow.getId().equals(userConnectedFromDB.getId())) {
+            throw new ApiSocialNetworkException("Vous ne pouvez pas vous suivre vous meme", HttpStatus.BAD_REQUEST);
+        }
+
+        // Empêcher de unfoloow une personne quon ne suit pas
+        if (!userConnectedFromDB.getSuivis().contains(userToUnFollow)) {
+            throw new ApiSocialNetworkException("Vous ne suivez pas cette personne", HttpStatus.CONFLICT);
+        }
+
+        userConnectedFromDB.getSuivis().remove(userToUnFollow);
+        userToUnFollow.getFollowers().remove(userConnectedFromDB);
+        utilisateurRepository.save(userConnectedFromDB);
+        utilisateurRepository.save(userToUnFollow);
+
+        return (long) userConnectedFromDB.getSuivis().size();    }
 }
 

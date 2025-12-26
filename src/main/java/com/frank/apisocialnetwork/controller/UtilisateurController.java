@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -74,6 +75,21 @@ public class UtilisateurController {
     @GetMapping(path = "{id}")
     public ResponseEntity<UtilisateurDTO> getUserById(@PathVariable Integer id) {
         return utilisateurService.getUserById(id);
+    }
+
+    @PostMapping(path = "{userIdToFollow}/follow")
+    public ResponseEntity<Long> followUser(@PathVariable Integer userIdToFollow, @AuthenticationPrincipal Utilisateur userConnected) {
+        Long countSuivi = utilisateurService.followUser(userIdToFollow, userConnected);
+
+        return new ResponseEntity<>(countSuivi, HttpStatus.OK);
+    }
+
+
+    @PostMapping(path = "{userIdToUnFollow}/unfollow")
+    public ResponseEntity<Long> unFollowUser(@PathVariable Integer userIdToUnFollow, @AuthenticationPrincipal Utilisateur userConnected) {
+        Long countSuivi = utilisateurService.unFollowUser(userIdToUnFollow, userConnected);
+
+        return new ResponseEntity<>(countSuivi, HttpStatus.OK);
     }
 
 

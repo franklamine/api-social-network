@@ -1,28 +1,25 @@
 package com.frank.apisocialnetwork.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "utilisateurs", uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
 public class Utilisateur implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer id;
     private String nom;
     private String prenom;
@@ -35,7 +32,7 @@ public class Utilisateur implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL)
     private Role role;
 
-    @OneToOne(mappedBy = "utilisateur", cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToOne(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
     Profile profile;
 
     @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -44,9 +41,28 @@ public class Utilisateur implements UserDetails {
     @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Token> tokens;
 
+    @ManyToMany
+    @JoinTable(
+            name = "utilisateur_suivi",
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "following_id")
+    )
+    private Set<Utilisateur> suivis = new HashSet<>();
+
+    @ManyToMany(mappedBy = "suivis")
+    private Set<Utilisateur> followers = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "utilisateur_group",
+            joinColumns = @JoinColumn(name = "utilisateur_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id")
+    )
+    private Set<Group> groups = new HashSet<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_"+this.role.getTypeRole()));
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + this.role.getTypeRole()));
     }
 
     @Override

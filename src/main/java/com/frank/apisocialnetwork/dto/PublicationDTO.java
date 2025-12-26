@@ -14,7 +14,8 @@ public record PublicationDTO(
         String photoAuteurPublication,
         List<CommentDTO> comments,
         long likeCount,
-        boolean likedByConnectedUser,
+        boolean isLikedByConnectedUser,
+        boolean authorIsFollowByUserConnected,
         Instant date
 ) {}
 

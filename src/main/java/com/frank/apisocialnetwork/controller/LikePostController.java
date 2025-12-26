@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.*;
 public class LikePostController {
     private LikePostService likePostService;
 
-    @PostMapping(path = "{publicationID}")
+    @PostMapping(path = "/post/{publicationID}")
     public ResponseEntity<Long> likedOrDislikedPublication(@PathVariable Integer publicationID, @AuthenticationPrincipal Utilisateur connectedUser) {
         Long countLike = likePostService.likedOrDislikedPublication(publicationID, connectedUser);
         return new ResponseEntity<>(countLike, HttpStatus.OK);
     }
 
 
-    @GetMapping(path = "{userId}")
+    @PostMapping(path = "{userId}")
     public ResponseEntity<Long> getTotalLikesByUser(@PathVariable Integer userId) {
         Long totalLikes = likePostService.getTotalLikesByUser(userId);
 
