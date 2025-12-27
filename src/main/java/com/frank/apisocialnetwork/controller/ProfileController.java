@@ -1,6 +1,5 @@
 package com.frank.apisocialnetwork.controller;
 
-import com.frank.apisocialnetwork.entity.Profile;
 import com.frank.apisocialnetwork.service.ProfileService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

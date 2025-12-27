@@ -8,5 +8,6 @@ public record UtilisateurDTO(
         ProfileDTO profile,
         Long totalLikes,
         Integer totalSuivis,
-        Integer totalFollowers) {
+        Integer totalFollowers
+) {
 }
