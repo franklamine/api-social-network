@@ -31,5 +31,10 @@ public class PublicationController {
         return publicationService.getAllPublications();
     }
 
+    @GetMapping(path ="utilisateur/{userId}")
+    public ResponseEntity<List<PublicationDTO>> getAllPublicationsByUserId(@PathVariable Integer userId) {
+        return publicationService.getAllPublicationsByUserId(userId);
+    }
+
 
 }

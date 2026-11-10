@@ -2,20 +2,18 @@ package com.frank.apisocialnetwork.dto;
 
 
 import java.time.Instant;
-import java.util.List;
 
 public record PublicationDTO(
-        int id,
-        int idAuteur,
+        Integer id,
         String message,
         String urlPhoto,
         String urlVideo,
-        String auteurPublication,
-        String photoAuteurPublication,
-        List<CommentDTO> comments,
+        UserSummaryDTO author,
+        long commentCount,
         long likeCount,
-        boolean isLikedByConnectedUser,
-        boolean authorIsFollowByUserConnected,
-        Instant date
+        boolean isAuthor,
+        boolean likedByConnectedUser,
+        boolean followingAuthor,
+        Instant createdAt
 ) {}
 

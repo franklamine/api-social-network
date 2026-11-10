@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-
+@Slf4j
 @AllArgsConstructor
 @Service
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
@@ -28,7 +29,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String username = null;
         boolean isTokenExpired = true;
         final String authorizationToken = request.getHeader("Authorization");
-        System.out.println(authorizationToken);
+        log.info("URI: {} | METHOD: {}", request.getRequestURI(), request.getMethod());
 
         if (authorizationToken != null && authorizationToken.startsWith("Bearer ")) {
             token = authorizationToken.substring(7);

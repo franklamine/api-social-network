@@ -13,9 +13,12 @@ import java.util.Optional;
 public interface LikePostRepository extends JpaRepository<LikePost, Long> {
     Optional<LikePost> findByUtilisateurAndPublication(Utilisateur connectedUser, Publication publication);
 
+    boolean existsByUtilisateurAndPublication(Utilisateur connectedUser, Publication publication);
+
     Long countByPublication(Publication publication);
 
     @Query("SELECT COUNT(l) FROM LikePost l WHERE l.publication.utilisateur.id = :userId")
     Long getTotalLikesByUser(@Param("userId") Integer userId);
+
 
 }

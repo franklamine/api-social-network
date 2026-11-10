@@ -9,4 +9,8 @@ public interface PublicationRepository extends JpaRepository<Publication, Intege
 
     List<Publication> findAllByOrderByCreatedAtDesc();
 
+    Integer countByUtilisateurId(Integer utilisateurId);
+
+    List<Publication> findByUtilisateurIdOrderByCreatedAtDesc(Integer utilisateurId);
 }
+

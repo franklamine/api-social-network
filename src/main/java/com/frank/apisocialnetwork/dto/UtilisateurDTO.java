@@ -5,7 +5,7 @@ public record UtilisateurDTO(
         int id,
         String nom,
         String prenom,
-        ProfileDTO profile,
+        UserProfileDTO profile,
         Long totalLikes,
         Integer totalSuivis,
         Integer totalFollowers

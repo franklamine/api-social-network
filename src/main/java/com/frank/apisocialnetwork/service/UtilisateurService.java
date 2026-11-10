@@ -1,12 +1,12 @@
 package com.frank.apisocialnetwork.service;
 
 import com.frank.apisocialnetwork.dto.AuthentificationDTO;
-import com.frank.apisocialnetwork.dto.ProfileDTO;
-import com.frank.apisocialnetwork.dto.UserConnectedDTO;
-import com.frank.apisocialnetwork.dto.UtilisateurDTO;
+import com.frank.apisocialnetwork.dto.UserProfileDTO;
+import com.frank.apisocialnetwork.dto.UserSummaryDTO;
 import com.frank.apisocialnetwork.entity.*;
 import com.frank.apisocialnetwork.enumerateur.TypeRole;
 import com.frank.apisocialnetwork.exception.ApiSocialNetworkException;
+import com.frank.apisocialnetwork.repository.PublicationRepository;
 import com.frank.apisocialnetwork.repository.TokenRepository;
 import com.frank.apisocialnetwork.repository.UtilisteurRepository;
 import com.frank.apisocialnetwork.repository.ValidationRepository;
@@ -42,6 +42,7 @@ public class UtilisateurService {
     private TokenRepository tokenRepository;
     private CustomUserDetailsService customUserDetailsService;
     private LikePostService likePostService;
+    private PublicationRepository publicationRepository;
 
 
     public ResponseEntity<String> inscription(Utilisateur utilisateur) {
@@ -114,10 +115,7 @@ public class UtilisateurService {
     public ResponseEntity<String> deconnexion(Map<String, String> refreshToken) {
         List<Token> tokens = tokenRepository.findByRefreshToken(refreshToken.get("token"));
         if (!tokens.isEmpty()) {
-            for (Token s : tokens) {
-                tokenRepository.delete(s);
-            }
-//            throw new ApiSocialNetworkException("Token non trouve",HttpStatus.MULTI_STATUS);
+            tokenRepository.deleteAll(tokens);
         }
         return new ResponseEntity<>("Déconnexion réussie", HttpStatus.OK);
     }
@@ -148,43 +146,46 @@ public class UtilisateurService {
     }
 
 
-    public ResponseEntity<UserConnectedDTO> getConnectedUser() {
+    public ResponseEntity<UserSummaryDTO> getConnectedUser() {
 
         Utilisateur userConnected = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        UserConnectedDTO userConnectedDTO = new UserConnectedDTO(
+        UserSummaryDTO userSummaryDTO = new UserSummaryDTO(
                 userConnected.getId(),
                 userConnected.getNom(),
                 userConnected.getPrenom(),
-                userConnected.getProfile().getUrlPhotoProfile(),
-                userConnected.getProfile().getUrlPhotoCouverture()
+                userConnected.getProfile().getUrlPhotoProfile()
         );
 
-        return new ResponseEntity<>(userConnectedDTO, HttpStatus.OK);
+        return new ResponseEntity<>(userSummaryDTO, HttpStatus.OK);
 
     }
 
 
-    public ResponseEntity<UtilisateurDTO> getUserById(Integer id) {
+    public ResponseEntity<UserProfileDTO> getUserById(Integer id) {
         log.info(id.toString());
-        Utilisateur utilisateur = utilisateurRepository
+        Utilisateur userConnected = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Utilisateur userProfile = utilisateurRepository
                 .findById(id)
                 .orElseThrow(() -> new ApiSocialNetworkException("Utilisateur non trouvé", HttpStatus.NOT_FOUND));
 
-        Profile profile = utilisateur.getProfile();
-        ProfileDTO profileDTO = new ProfileDTO(profile.getBio(), profile.getUrlPhotoProfile(), profile.getUrlPhotoCouverture());
-
-        UtilisateurDTO utilisateurDTO = new UtilisateurDTO(
-                utilisateur.getId(),
-                utilisateur.getNom(),
-                utilisateur.getPrenom(),
-                profileDTO,
+        Profile profile = userProfile.getProfile();
+        UserProfileDTO userProfileDTO = new UserProfileDTO(
+                userProfile.getId(),
+                userProfile.getNom(),
+                userProfile.getPrenom(),
+                profile.getUrlPhotoProfile(),
+                profile.getUrlPhotoCouverture(),
+                profile.getBio(),
+                publicationRepository.countByUtilisateurId(id),
+                userProfile.getFollowers().size(),
+                userProfile.getSuivis().size(),
                 likePostService.getTotalLikesByUser(id),
-                utilisateur.getSuivis().size(),
-                utilisateur.getFollowers().size()
+                userProfile.getId().equals(userConnected.getId()),
+                userProfile.getFollowers().contains(userConnected)
         );
 
-        return new ResponseEntity<>(utilisateurDTO, HttpStatus.OK);
+        return new ResponseEntity<>(userProfileDTO, HttpStatus.OK);
     }
 
 
@@ -240,6 +241,7 @@ public class UtilisateurService {
         utilisateurRepository.save(userConnectedFromDB);
         utilisateurRepository.save(userToUnFollow);
 
-        return (long) userConnectedFromDB.getSuivis().size();    }
+        return (long) userConnectedFromDB.getSuivis().size();
+    }
 }
 

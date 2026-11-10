@@ -1,11 +1,11 @@
 package com.frank.apisocialnetwork.service;
 
-import com.frank.apisocialnetwork.dto.CommentDTO;
 import com.frank.apisocialnetwork.dto.PublicationDTO;
-import com.frank.apisocialnetwork.entity.Profile;
+import com.frank.apisocialnetwork.dto.UserSummaryDTO;
 import com.frank.apisocialnetwork.entity.Publication;
 import com.frank.apisocialnetwork.entity.Utilisateur;
 import com.frank.apisocialnetwork.exception.ApiSocialNetworkException;
+import com.frank.apisocialnetwork.repository.CommentRepository;
 import com.frank.apisocialnetwork.repository.LikePostRepository;
 import com.frank.apisocialnetwork.repository.PublicationRepository;
 import lombok.AllArgsConstructor;
@@ -26,6 +26,7 @@ public class PublicationService {
     private final PublicationRepository publicationRepository;
     private final CloudinaryService cloudinaryService;
     private final LikePostRepository likePostRepository;
+    private final CommentRepository commentRepository;
 
     public ResponseEntity<String> creerPublication(String message, MultipartFile photo, MultipartFile video) {
         try {
@@ -59,45 +60,27 @@ public class PublicationService {
         Utilisateur connectedUser = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<PublicationDTO> publicationDTOS = publicationRepository.findAllByOrderByCreatedAtDesc().stream()
-                .map(publication -> {
+                .map(post -> {
 
-                    String auteurPublication = publication.getUtilisateur().getNom() + " " + publication.getUtilisateur().getPrenom();
-                    boolean isLikedByConnectedUser = likePostRepository.findByUtilisateurAndPublication(connectedUser, publication).isPresent();
-                    boolean authorIsFollowByUserConnected =  publication.getUtilisateur().getFollowers().contains(connectedUser);
-
-
-                    Profile profile = publication.getUtilisateur().getProfile();
-                    String photoAuteurPublicationUrl = profile.getUrlPhotoProfile();
-
-                    List<CommentDTO> commentDTOs = publication.getComments().stream()
-                            .map(comment -> {
-                                Utilisateur utilisateur = comment.getUtilisateur();
-                                Profile profile1 = utilisateur.getProfile();
-                                String photoAuteurComentUrl = profile1.getUrlPhotoProfile();
-                                return new CommentDTO(
-                                        comment.getId(),
-                                        publication.getId(),
-                                        comment.getMessage(),
-                                        utilisateur.getNom() + " " + utilisateur.getPrenom(),
-                                        photoAuteurComentUrl,
-                                        comment.getCreatedAt()
-                                );
-                            }).collect(Collectors.toList());
+                    UserSummaryDTO author = new UserSummaryDTO(
+                            post.getUtilisateur().getId(),
+                            post.getUtilisateur().getNom(),
+                            post.getUtilisateur().getPrenom(),
+                            post.getUtilisateur().getProfile().getUrlPhotoProfile()
+                    );
 
                     return new PublicationDTO(
-                            publication.getId(),
-                            publication.getUtilisateur().getId(),
-                            publication.getMessage(),
-                            publication.getUrlPhoto(),
-                            publication.getUrlVideo(),
-                            auteurPublication,
-                            photoAuteurPublicationUrl,
-                            commentDTOs,
-                            publication.getLikePosts().size(),
-                            isLikedByConnectedUser,
-                            authorIsFollowByUserConnected,
-                            publication.getCreatedAt()
-
+                            post.getId(),
+                            post.getMessage(),
+                            post.getUrlPhoto(),
+                            post.getUrlVideo(),
+                            author,
+                            commentRepository.countByPublication(post),
+                            likePostRepository.countByPublication(post),
+                            post.getUtilisateur().getId().equals(connectedUser.getId()),
+                            likePostRepository.existsByUtilisateurAndPublication(connectedUser, post),
+                            post.getUtilisateur().getFollowers().contains(connectedUser),
+                            post.getCreatedAt()
                     );
                 }).collect(Collectors.toList());
 
@@ -105,5 +88,36 @@ public class PublicationService {
     }
 
 
+    public ResponseEntity<List<PublicationDTO>> getAllPublicationsByUserId(Integer userId) {
+
+        Utilisateur connectedUser = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        List<PublicationDTO> publicationDTOS = publicationRepository.findByUtilisateurIdOrderByCreatedAtDesc(userId).stream()
+                .map(post -> {
+
+                    UserSummaryDTO author = new UserSummaryDTO(
+                            post.getUtilisateur().getId(),
+                            post.getUtilisateur().getNom(),
+                            post.getUtilisateur().getPrenom(),
+                            post.getUtilisateur().getProfile().getUrlPhotoProfile()
+                    );
+
+                    return new PublicationDTO(
+                            post.getId(),
+                            post.getMessage(),
+                            post.getUrlPhoto(),
+                            post.getUrlVideo(),
+                            author,
+                            commentRepository.countByPublication(post),
+                            likePostRepository.countByPublication(post),
+                            post.getUtilisateur().getId().equals(connectedUser.getId()),
+                            likePostRepository.existsByUtilisateurAndPublication(connectedUser, post),
+                            post.getUtilisateur().getFollowers().contains(connectedUser),
+                            post.getCreatedAt()
+                    );
+                }).collect(Collectors.toList());
+
+        return new ResponseEntity<>(publicationDTOS, HttpStatus.OK);
+    }
 
 }
